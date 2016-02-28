@@ -73,6 +73,8 @@ class TableOfContentsSpec: QuickSpec {
 
             // timeout
 
+            // how to gracefully handle timeout?
+
 
 
         }
@@ -334,7 +336,7 @@ class TableOfContentsSpec: QuickSpec {
         }
         
         
-        describe("QoS") {
+        describe("DispatchQueue") {
             
             it("can get Queue") {
                 
