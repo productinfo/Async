@@ -141,7 +141,7 @@ class TableOfContentsSpec: QuickSpec {
                 }
 
                 async {
-                    await(blocks: numbers.map(toString))
+                    await(parallel: numbers.map(toString))
                     }({(results:[String]) in
                         expect(results).to(contain(numbers.map {number in "\(number)"}))
                     })
@@ -152,42 +152,32 @@ class TableOfContentsSpec: QuickSpec {
                 }
             }
 
-//            it("if passed an object, parallel") {
-//                let numbers: [Int] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-//                let toString = {(number: Int) in
-//                    async {() -> String in
-//                        NSThread.sleepForTimeInterval(0.1)
-//                        return "\(number)"
-//                    }
-//                }
-//
-//
-//                async {
-//                    // [K: (T -> Void) -> Void]
-//                    var object: [Int: (String -> Void) -> Void] = [:]
-//                    let tasks = numbers.map(toString)
-//                    for (index, element) in tasks.enumerate() {
-//                        let key = numbers[index]
-//                        object[key] = element
-//                    }
-//
-//                    return await(blocks: object)
-//                }({(results:[Int: String]) in
-////                    expect(results).to(contain(numbers.map {number in "\(number)"}))
-//                })
-//                
-//                waitUntil { done in
-//                    NSThread.sleepForTimeInterval(0.5)
-//                    done()
-//                }
-//            }
+            it("if passed an object, parallel") {
+                let numbers: [Int] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+                let toString = {(number: Int) in
+                    async {() -> String in
+                        NSThread.sleepForTimeInterval(0.1)
+                        return "\(number)"
+                    }
+                }
 
-            it("if passed an array") {
+                async {
+                    var object: [Int: (String -> Void) -> Void] = [:]
+                    let tasks = numbers.map(toString)
+                    for (index, element) in tasks.enumerate() {
+                        let key = numbers[index]
+                        object[key] = element
+                    }
 
-            }
-
-            it("if passed an object") {
-
+                    return await(parallel: object)
+                }({(results:[Int: String]) in
+//                    expect(results).to(contain(numbers.map {number in "\(number)"}))
+                })
+                
+                waitUntil { done in
+                    NSThread.sleepForTimeInterval(0.5)
+                    done()
+                }
             }
 
         }

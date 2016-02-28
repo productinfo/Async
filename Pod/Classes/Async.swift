@@ -19,7 +19,11 @@ public func async(queue: dispatch_queue_t = getDefaultQueue(), block: () -> Void
     }
 }
 
-public func await(queue: dispatch_queue_t = getDefaultQueue(), timeout: dispatch_time_t = getDefaultTimeout(), blocks: [((Void -> Void) -> Void)]) {
+/*:
+https://developer.apple.com/library/ios/documentation/General/Conceptual/ConcurrencyProgrammingGuide/OperationQueues/OperationQueues.html#//apple_ref/doc/uid/TP40008091-CH102-SW5
+The actual number of tasks executed by a concurrent queue at any given moment is variable and can change dynamically as conditions in your application change. Many factors affect the number of tasks executed by the concurrent queues, including the number of available cores, the amount of work being done by other processes, and the number and priority of tasks in other serial dispatch queues.
+*/
+public func await(queue: dispatch_queue_t = getDefaultQueue(), timeout: dispatch_time_t = getDefaultTimeout(), parallel blocks: [((Void -> Void) -> Void)]) {
     let group = dispatch_group_create()
 
     for block in blocks {
@@ -36,13 +40,13 @@ public func await(queue: dispatch_queue_t = getDefaultQueue(), timeout: dispatch
 }
 
 public func await(queue: dispatch_queue_t = getDefaultQueue(), timeout: dispatch_time_t = getDefaultTimeout(), block: ((Void -> Void) -> Void)) {
-    return await(queue, blocks: [block])
+    return await(queue, parallel: [block])
 }
 
 // MARK: async/await { }
 
 public func await(queue: dispatch_queue_t = getDefaultQueue(), timeout: dispatch_time_t = getDefaultTimeout(), block: Void -> ((Void -> Void) -> Void)) {
-    return await(blocks: [block()])[0]
+    return await(parallel: [block()])[0]
 }
 
 
@@ -56,7 +60,7 @@ public func async<T>(queue: dispatch_queue_t = getDefaultQueue(), block: () -> T
     }
 }
 
-public func await<K, T>(queue: dispatch_queue_t = getDefaultQueue(), timeout: dispatch_time_t = getDefaultTimeout(), blocks: [K: (T -> Void) -> Void]) -> [K: T] {
+public func await<K, T>(queue: dispatch_queue_t = getDefaultQueue(), timeout: dispatch_time_t = getDefaultTimeout(), parallel blocks: [K: (T -> Void) -> Void]) -> [K: T] {
     let group = dispatch_group_create()
 
     var results = [K: T]()
@@ -77,32 +81,32 @@ public func await<K, T>(queue: dispatch_queue_t = getDefaultQueue(), timeout: di
     return results
 }
 
-public func await<T>(queue: dispatch_queue_t = getDefaultQueue(), timeout: dispatch_time_t = getDefaultTimeout(), blocks: [(T -> Void) -> Void]) -> [T] {
+public func await<T>(queue: dispatch_queue_t = getDefaultQueue(), timeout: dispatch_time_t = getDefaultTimeout(), parallel blocks: [(T -> Void) -> Void]) -> [T] {
     let dictBlocks = blocks.indexedDictionary
-    let results = await(queue, timeout: timeout, blocks: dictBlocks)
+    let results = await(queue, timeout: timeout, parallel: dictBlocks)
     return Array(results.values)
 }
 
 public func await<T>(queue: dispatch_queue_t, timeout: dispatch_time_t, block: (T -> Void) -> Void) -> T {
-    return await(queue, timeout: timeout, blocks: [block])[0]
+    return await(queue, timeout: timeout, parallel: [block])[0]
 }
 
 public func await<T>(timeout: dispatch_time_t, block: (T -> Void) -> Void) -> T {
-    return await(timeout: timeout, blocks: [block])[0]
+    return await(timeout: timeout, parallel: [block])[0]
 }
 
 public func await<T>(queue: dispatch_queue_t, block: (T -> Void) -> Void) -> T {
-    return await(queue, blocks: [block])[0]
+    return await(queue, parallel: [block])[0]
 }
 
 public func await<T>(block: (T -> Void) -> Void) -> T {
-    return await(blocks: [block])[0]
+    return await(parallel: [block])[0]
 }
 
 // MARK: async<T>/await<T> { }
 
 public func await<T>(block: (Void -> (T -> Void) -> Void)) -> T {
-    return await(blocks: [block()])[0]
+    return await(parallel: [block()])[0]
 }
 
 // queue, timeout
@@ -128,7 +132,7 @@ public func async$(queue: dispatch_queue_t = getDefaultQueue(), block: () throws
     }
 }
 
-public func await$(queue: dispatch_queue_t = getDefaultQueue(), timeout: dispatch_time_t = getDefaultTimeout(), blocks: [((ErrorType? -> Void) -> Void)]) throws {
+public func await$(queue: dispatch_queue_t = getDefaultQueue(), timeout: dispatch_time_t = getDefaultTimeout(), parallel blocks: [((ErrorType? -> Void) -> Void)]) throws {
     let group = dispatch_group_create()
 
     var err: ErrorType?
@@ -156,7 +160,7 @@ public func await$(queue: dispatch_queue_t = getDefaultQueue(), timeout: dispatc
 
 
 public func await$(queue: dispatch_queue_t = getDefaultQueue(), timeout: dispatch_time_t = getDefaultTimeout(), block: ((ErrorType? -> Void) -> Void)) throws {
-    return try await$(queue, blocks: [block])
+    return try await$(queue, parallel: [block])
 }
 
 
@@ -179,7 +183,7 @@ public func async$<T>(queue: dispatch_queue_t = getDefaultQueue(), block: () thr
     }
 }
 
-public func await$<K, T>(queue: dispatch_queue_t = getDefaultQueue(), timeout: dispatch_time_t = getDefaultTimeout(), blocks: [K: (((T?, ErrorType?) -> Void) -> Void)]) throws -> [K: T] {
+public func await$<K, T>(queue: dispatch_queue_t = getDefaultQueue(), timeout: dispatch_time_t = getDefaultTimeout(), parallel blocks: [K: (((T?, ErrorType?) -> Void) -> Void)]) throws -> [K: T] {
     let group = dispatch_group_create()
 
     var results = [K: T]()
@@ -211,30 +215,30 @@ public func await$<K, T>(queue: dispatch_queue_t = getDefaultQueue(), timeout: d
     return results
 }
 
-public func await$<T>(queue: dispatch_queue_t = getDefaultQueue(), timeout: dispatch_time_t = getDefaultTimeout(), blocks: [(((T?, ErrorType?) -> Void) -> Void)]) throws -> [T] {
+public func await$<T>(queue: dispatch_queue_t = getDefaultQueue(), timeout: dispatch_time_t = getDefaultTimeout(), parallel blocks: [(((T?, ErrorType?) -> Void) -> Void)]) throws -> [T] {
     let dictBlocks = blocks.indexedDictionary
-    return Array(try await$(queue, timeout: timeout, blocks: dictBlocks).values)
+    return Array(try await$(queue, timeout: timeout, parallel: dictBlocks).values)
 }
 
 public func await$<T>(queue: dispatch_queue_t, timeout: dispatch_time_t, block: (((T?, ErrorType?) -> Void) -> Void)) throws -> T {
-    return try await$(queue, timeout: timeout, blocks: [block])[0]
+    return try await$(queue, timeout: timeout, parallel: [block])[0]
 }
 
 public func await$<T>(timeout: dispatch_time_t, block: (((T?, ErrorType?) -> Void) -> Void)) throws -> T {
-    return try await$(timeout: timeout, blocks: [block])[0]
+    return try await$(timeout: timeout, parallel: [block])[0]
 }
 
 public func await$<T>(queue: dispatch_queue_t, block: (((T?, ErrorType?) -> Void) -> Void)) throws -> T {
-    return try await$(queue, blocks: [block])[0]
+    return try await$(queue, parallel: [block])[0]
 }
 
 public func await$<T>(block: (((T?, ErrorType?) -> Void) -> Void)) throws -> T {
-    return try await$(blocks: [block])[0]
+    return try await$(parallel: [block])[0]
 }
 
 // MARK: async$<T>/await$<T> { }
 public func await$<T>(block: (Void -> (((T?, ErrorType?) -> Void) -> Void))) throws -> T {
-    return try await$(blocks: [block()])[0]
+    return try await$(parallel: [block()])[0]
 }
 
 // TODO: queue, timeout
