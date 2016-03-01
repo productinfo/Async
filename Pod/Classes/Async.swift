@@ -114,13 +114,14 @@ public func await$<K, T>(queue: DispatchQueue = getDefaultQueue(), timeout: NSTi
 
     for (key, block) in blocks {
         guard err == nil else { break }
-
         results.updateValue(nil, forKey: key)
         dispatch_group_async(group, queue.get()) {
             let fd_sema = dispatch_semaphore_create(0)
             block {result, error in
                 results[key] = result
-                err = error
+                if err == nil {
+                    err = error
+                }
                 dispatch_semaphore_signal(fd_sema)
             }
             if dispatch_semaphore_wait(fd_sema, timeout) == 1 {
@@ -170,24 +171,7 @@ public func await$<T>(queue: DispatchQueue = getDefaultQueue(), block: (Void -> 
     return try await$(parallel: [block()])[0]
 }
 
-
 // MARK: - Helpers
 private func getDefaultQueue() -> DispatchQueue {
     return .UserInitiated
-}
-
-extension dispatch_time_t {
-    init(timeInterval: NSTimeInterval) {
-        self.init(timeInterval < NSTimeInterval(0) ? DISPATCH_TIME_FOREVER : dispatch_time(DISPATCH_TIME_NOW, Int64(timeInterval * Double(NSEC_PER_SEC))))
-    }
-}
-
-private extension Array {
-    var indexedDictionary: [Int:Element] {
-        var result: [Int:Element] = [:]
-        for (index, element) in enumerate() {
-            result[index] = element
-        }
-        return result
-    }
 }

@@ -13,6 +13,7 @@
 		0365776810107A028113FEA9A70DCE92 /* World+DSL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DDA3CDE7515A11BE56C6C2FE5FB65D8 /* World+DSL.swift */; };
 		0492354DA7EF0C9068F7B4E8F74001B0 /* FailureMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25961731CF4F7537A5ECD61A000A150C /* FailureMessage.swift */; };
 		09415B2B6B6B1B04175D5DD134D76023 /* ExampleGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2005F86F2C2D05CDE00BB78EF02D6D4 /* ExampleGroup.swift */; };
+		0983CFE81C863883004B89BB /* Misc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0983CFE71C863883004B89BB /* Misc.swift */; };
 		09D6CC801C81062F00AEEF26 /* Async.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09D6CC7F1C81062F00AEEF26 /* Async.swift */; };
 		0A6E71555F55082003A3DB2B03CA85D2 /* AsyncMatcherWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D42013D479CDC11E7882C7C0045B66B /* AsyncMatcherWrapper.swift */; };
 		0B5D5B241EECF4B4C763F0856221BC76 /* Closures.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE6E3634125A20B9BA58962919B08DDC /* Closures.swift */; };
@@ -138,6 +139,7 @@
 		021C4E135FFC34B4A74FD0560A640549 /* Quick.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = Quick.modulemap; sourceTree = "<group>"; };
 		02297D692E5CA1B1C21CCCDA1853BA44 /* BeNil.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BeNil.swift; path = Nimble/Matchers/BeNil.swift; sourceTree = "<group>"; };
 		095EC7C1249771358FA4DF3D0D2C9C5C /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0983CFE71C863883004B89BB /* Misc.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Misc.swift; sourceTree = "<group>"; };
 		09D6CC7F1C81062F00AEEF26 /* Async.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Async.swift; sourceTree = "<group>"; };
 		0B0C995C72A44C02A9369FA2BDB1F4FF /* AssertionDispatcher.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AssertionDispatcher.swift; path = Nimble/Adapters/AssertionDispatcher.swift; sourceTree = "<group>"; };
 		0B53DF3C5B85F993313E9FA09386C167 /* BeAKindOf.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BeAKindOf.swift; path = Nimble/Matchers/BeAKindOf.swift; sourceTree = "<group>"; };
@@ -494,6 +496,7 @@
 			children = (
 				23A7919045685312CAAFB37060952D5F /* DispatchQueue.swift */,
 				09D6CC7F1C81062F00AEEF26 /* Async.swift */,
+				0983CFE71C863883004B89BB /* Misc.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -871,6 +874,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C93BF20604E5882C2BCD2E36329EE07E /* Async-dummy.m in Sources */,
+				0983CFE81C863883004B89BB /* Misc.swift in Sources */,
 				09D6CC801C81062F00AEEF26 /* Async.swift in Sources */,
 				BC31C7992E7FC0EB148F1CC1E5FEE889 /* DispatchQueue.swift in Sources */,
 			);
