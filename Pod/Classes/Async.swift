@@ -14,10 +14,10 @@ public let $ = {}
 
 // MARK: async<T>/await<T>
 
-public func async<T>(queue: DispatchQueue = getDefaultQueue(), block: () -> T) -> ((T -> Void) -> Void) {
+public func async<T>(queue: DispatchQueue = getDefaultQueue(), task: () -> T) -> ((T -> Void) -> Void) {
     return {(callback: T -> Void) in
         dispatch_async(queue.get()) {
-            callback(block())
+            callback(task())
         }
     }
 }
@@ -27,17 +27,17 @@ https://developer.apple.com/library/ios/documentation/General/Conceptual/Concurr
 The actual number of tasks executed by a concurrent queue at any given moment is variable and can change dynamically as conditions in your application change. Many factors affect the number of tasks executed by the concurrent queues, including the number of available cores, the amount of work being done by other processes, and the number and priority of tasks in other serial dispatch queues.
 */
 
-public func await<K, T>(queue: DispatchQueue = getDefaultQueue(), timeout: NSTimeInterval, parallel blocks: [K: (T -> Void) -> Void]) -> [K: T?] {
+public func await<K, T>(queue: DispatchQueue = getDefaultQueue(), timeout: NSTimeInterval, parallel tasks: [K: (T -> Void) -> Void]) -> [K: T?] {
     let timeout = dispatch_time_t(timeInterval: timeout)
     let group = dispatch_group_create()
 
     var results = [K: T?]()
 
-    for (key, block) in blocks {
+    for (key, task) in tasks {
         results.updateValue(nil, forKey: key)
         dispatch_group_async(group, queue.get()) {
             let fd_sema = dispatch_semaphore_create(0)
-            block {(result: T) in
+            task {(result: T) in
                 results[key] = result
                 dispatch_semaphore_signal(fd_sema)
             }
@@ -52,52 +52,52 @@ public func await<K, T>(queue: DispatchQueue = getDefaultQueue(), timeout: NSTim
     return results
 }
 
-public func await<T>(queue: DispatchQueue = getDefaultQueue(), timeout: NSTimeInterval, parallel blocks: [(T -> Void) -> Void]) -> [T?] {
-    return Array(await(queue, timeout: timeout, parallel: blocks.indexedDictionary).values)
+public func await<T>(queue: DispatchQueue = getDefaultQueue(), timeout: NSTimeInterval, parallel tasks: [(T -> Void) -> Void]) -> [T?] {
+    return Array(await(queue, timeout: timeout, parallel: tasks.indexedDictionary).values)
 }
 
-public func await<T>(queue: DispatchQueue = getDefaultQueue(), timeout: NSTimeInterval, block: (T -> Void) -> Void) -> T? {
-    return await(queue, timeout: timeout, parallel: [block])[0]
+public func await<T>(queue: DispatchQueue = getDefaultQueue(), timeout: NSTimeInterval, task: (T -> Void) -> Void) -> T? {
+    return await(queue, timeout: timeout, parallel: [task])[0]
 }
 
-public func await<T>(queue: DispatchQueue = getDefaultQueue(), timeout: NSTimeInterval, block: (Void -> (T -> Void) -> Void)) -> T? {
-    return await(queue, timeout: timeout, parallel: [block()])[0]
+public func await<T>(queue: DispatchQueue = getDefaultQueue(), timeout: NSTimeInterval, task: (Void -> (T -> Void) -> Void)) -> T? {
+    return await(queue, timeout: timeout, parallel: [task()])[0]
 }
 
-// wait on the queue in which it was invoked. queue: the queue to execute the blocks, animation, main thread
-public func await<K, T>(queue: DispatchQueue = getDefaultQueue(), parallel blocks: [K: (T -> Void) -> Void]) -> [K: T] {
+// wait on the queue in which it was invoked. queue: the queue to execute the tasks, animation, main thread
+public func await<K, T>(queue: DispatchQueue = getDefaultQueue(), parallel tasks: [K: (T -> Void) -> Void]) -> [K: T] {
     var results = [K: T]()
-    for (key, value) in await(queue, timeout: -1, parallel: blocks) {
+    for (key, value) in await(queue, timeout: -1, parallel: tasks) {
         results.updateValue(value!, forKey: key)
     }
     return results
 }
 
-public func await<T>(queue: DispatchQueue = getDefaultQueue(), parallel blocks: [(T -> Void) -> Void]) -> [T] {
-    return Array(await(queue, parallel: blocks.indexedDictionary).values)
+public func await<T>(queue: DispatchQueue = getDefaultQueue(), parallel tasks: [(T -> Void) -> Void]) -> [T] {
+    return Array(await(queue, parallel: tasks.indexedDictionary).values)
 }
 
-public func await<T>(queue: DispatchQueue = getDefaultQueue(), block: (T -> Void) -> Void) -> T {
-    return await(queue, parallel: [block])[0]
+public func await<T>(queue: DispatchQueue = getDefaultQueue(), task: (T -> Void) -> Void) -> T {
+    return await(queue, parallel: [task])[0]
 }
 
-public func await<T>(queue: DispatchQueue = getDefaultQueue(), block: (Void -> (T -> Void) -> Void)) -> T {
-    return await(queue, parallel: [block()])[0]
+public func await<T>(queue: DispatchQueue = getDefaultQueue(), task: (Void -> (T -> Void) -> Void)) -> T {
+    return await(queue, parallel: [task()])[0]
 }
 
 // MARK: - Error Handling
 
 /*:
 https://developer.apple.com/library/ios/documentation/Performance/Reference/GCD_libdispatch_Ref/
-> GCD is a C level API; it does not catch exceptions generated by higher level languages. Your application must catch all exceptions before returning from a block submitted to a dispatch queue.
+> GCD is a C level API; it does not catch exceptions generated by higher level languages. Your application must catch all exceptions before returning from a task submitted to a dispatch queue.
 */
 
 // MARK: async$<T>/await$<T>
-public func async$<T>(queue: DispatchQueue = getDefaultQueue(), block: () throws -> T) -> (((T?, ErrorType?) -> Void) -> Void) {
+public func async$<T>(queue: DispatchQueue = getDefaultQueue(), task: () throws -> T) -> (((T?, ErrorType?) -> Void) -> Void) {
     return {(callback: (T?, ErrorType?) -> Void) in
         dispatch_async(queue.get()) {
             do {
-                callback(try block(), nil)
+                callback(try task(), nil)
             } catch {
                 callback(nil, error)
             }
@@ -105,19 +105,19 @@ public func async$<T>(queue: DispatchQueue = getDefaultQueue(), block: () throws
     }
 }
 
-public func await$<K, T>(queue: DispatchQueue = getDefaultQueue(), timeout: NSTimeInterval, parallel blocks: [K: (((T?, ErrorType?) -> Void) -> Void)]) throws -> [K: T?] {
+public func await$<K, T>(queue: DispatchQueue = getDefaultQueue(), timeout: NSTimeInterval, parallel tasks: [K: (((T?, ErrorType?) -> Void) -> Void)]) throws -> [K: T?] {
     let timeout = dispatch_time_t(timeInterval: timeout)
     let group = dispatch_group_create()
 
     var results = [K: T?]()
     var err: ErrorType?
 
-    for (key, block) in blocks {
+    for (key, task) in tasks {
         guard err == nil else { break }
         results.updateValue(nil, forKey: key)
         dispatch_group_async(group, queue.get()) {
             let fd_sema = dispatch_semaphore_create(0)
-            block {result, error in
+            task {result, error in
                 results[key] = result
                 if err == nil {
                     err = error
@@ -139,36 +139,36 @@ public func await$<K, T>(queue: DispatchQueue = getDefaultQueue(), timeout: NSTi
     return results
 }
 
-public func await$<T>(queue: DispatchQueue = getDefaultQueue(), timeout: NSTimeInterval, parallel blocks: [(((T?, ErrorType?) -> Void) -> Void)]) throws -> [T?] {
-    return Array(try await$(queue, timeout: timeout, parallel: blocks.indexedDictionary).values)
+public func await$<T>(queue: DispatchQueue = getDefaultQueue(), timeout: NSTimeInterval, parallel tasks: [(((T?, ErrorType?) -> Void) -> Void)]) throws -> [T?] {
+    return Array(try await$(queue, timeout: timeout, parallel: tasks.indexedDictionary).values)
 }
 
-public func await$<T>(queue: DispatchQueue = getDefaultQueue(), timeout: NSTimeInterval, block: (((T?, ErrorType?) -> Void) -> Void)) throws -> T? {
-    return try await$(queue, timeout: timeout, parallel: [block])[0]
+public func await$<T>(queue: DispatchQueue = getDefaultQueue(), timeout: NSTimeInterval, task: (((T?, ErrorType?) -> Void) -> Void)) throws -> T? {
+    return try await$(queue, timeout: timeout, parallel: [task])[0]
 }
 
-public func await$<T>(queue: DispatchQueue = getDefaultQueue(), timeout: NSTimeInterval, block: (Void -> (((T?, ErrorType?) -> Void) -> Void))) throws -> T? {
-    return try await$(queue, timeout: timeout, parallel: [block()])[0]
+public func await$<T>(queue: DispatchQueue = getDefaultQueue(), timeout: NSTimeInterval, task: (Void -> (((T?, ErrorType?) -> Void) -> Void))) throws -> T? {
+    return try await$(queue, timeout: timeout, parallel: [task()])[0]
 }
 
-public func await$<K, T>(queue: DispatchQueue = getDefaultQueue(), parallel blocks: [K: (((T?, ErrorType?) -> Void) -> Void)]) throws -> [K: T] {
+public func await$<K, T>(queue: DispatchQueue = getDefaultQueue(), parallel tasks: [K: (((T?, ErrorType?) -> Void) -> Void)]) throws -> [K: T] {
     var results = [K: T]()
-    for (key, value) in try await$(queue, timeout: -1, parallel: blocks) {
+    for (key, value) in try await$(queue, timeout: -1, parallel: tasks) {
         results.updateValue(value!, forKey: key)
     }
     return results
 }
 
-public func await$<T>(queue: DispatchQueue = getDefaultQueue(), parallel blocks: [(((T?, ErrorType?) -> Void) -> Void)]) throws -> [T] {
-    return Array(try await$(queue, parallel: blocks.indexedDictionary).values)
+public func await$<T>(queue: DispatchQueue = getDefaultQueue(), parallel tasks: [(((T?, ErrorType?) -> Void) -> Void)]) throws -> [T] {
+    return Array(try await$(queue, parallel: tasks.indexedDictionary).values)
 }
 
-public func await$<T>(queue: DispatchQueue = getDefaultQueue(), block: (((T?, ErrorType?) -> Void) -> Void)) throws -> T {
-    return try await$(queue, parallel: [block])[0]
+public func await$<T>(queue: DispatchQueue = getDefaultQueue(), task: (((T?, ErrorType?) -> Void) -> Void)) throws -> T {
+    return try await$(queue, parallel: [task])[0]
 }
 
-public func await$<T>(queue: DispatchQueue = getDefaultQueue(), block: (Void -> (((T?, ErrorType?) -> Void) -> Void))) throws -> T {
-    return try await$(parallel: [block()])[0]
+public func await$<T>(queue: DispatchQueue = getDefaultQueue(), task: (Void -> (((T?, ErrorType?) -> Void) -> Void))) throws -> T {
+    return try await$(parallel: [task()])[0]
 }
 
 // MARK: - Helpers

@@ -47,7 +47,7 @@ class TableOfContentsSpec: QuickSpec {
         describe("await") {
             it("can take async or a closure that returns async") {
                 async {
-                    await(block: async { expect(1) == 1 })
+                    await(task: async { expect(1) == 1 })
                     await { async { expect(1) == 1 } }
                 }($)
 
@@ -309,7 +309,7 @@ class TableOfContentsSpec: QuickSpec {
         describe("await$") {
             it("can take async or a closure that returns async") {
                 async$ {
-                    try await$(block: async$ { expect(1) == 1 })
+                    try await$(task: async$ { expect(1) == 1 })
                     try await$ { async$ { expect(1) == 1 } }
                 }() {_, _ in}
 
