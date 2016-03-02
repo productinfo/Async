@@ -181,11 +181,13 @@ async {
 ~~~
 
 ~~~swift
-public extension UIView {
+extension UIView {
     class func animateWithDurationAsync(duration: NSTimeInterval, animations: () -> Void) -> (Bool -> Void) -> Void {
         return async {
-            await(.Main) {callback in
-                UIView.animateWithDuration(duration, animations: animations, completion: callback)
+            await {callback in
+                async(.Main) {
+                    UIView.animateWithDuration(duration, animations: animations, completion: callback)
+                }() {}
             }
         }
     }
@@ -223,12 +225,12 @@ async {
 By default, async functions are scheduled in the [global concurrent queue](https://developer.apple.com/library/ios/documentation/General/Conceptual/ConcurrencyProgrammingGuide/OperationQueues/OperationQueues.html#//apple_ref/doc/uid/TP40008091-CH102-SW5) that has [quality of service](https://developer.apple.com/library/ios/documentation/Performance/Conceptual/EnergyGuide-iOS/PrioritizeWorkWithQoS.html) `QOS_CLASS_USER_INITIATED`. To schedule on a different queue:
 ~~~swift
 let taskOnMainThread = async(.Main) {
-
+    // do something
 }
 
 let customQueue = dispatch_queue_create("CustomQueueLabel", DISPATCH_QUEUE_CONCURRENT)
 let taskOnCustomQueue = async(.Custom(customQueue)) {
-
+    // do something
 }
 ~~~
 
