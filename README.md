@@ -17,8 +17,8 @@ dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
         UIView.animateWithDuration(0.3, animations: {
             self.label.alpha = 1
             }) {
-                // this is the end point
-                // add code to happen next here
+            // this is the end point
+            // add code to happen next here
         }
     }
 }
@@ -45,7 +45,7 @@ pod "SwiftAsync"
 ```
 
 ## Usage
-The [test file](https://github.com/zhxnlai/Async/blob/master/Example/Tests/Tests.swift) and example project help you get started.
+The example project and [test file](https://github.com/zhxnlai/Async/blob/master/Example/Tests/Tests.swift) will help you get started.
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
