@@ -18,7 +18,7 @@ class SleepDemoViewController: LogsTableViewController {
             while self != nil {
                 let seconds = UInt32(random() % 5)
 
-                self?.log("sleeping for \(seconds) sec")
+                self?.log("will sleep for \(seconds) sec")
                 sleep(seconds)
             }
         }() {}

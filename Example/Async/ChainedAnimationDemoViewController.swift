@@ -27,12 +27,7 @@ class ChainedAnimationDemoViewController: UIViewController {
 
         async {[weak self] in
             while self != nil {
-                let completed = await { UIView.animateWithDurationAsync(0.3) { self?.label.center = self!.randomCenter() } }
-//                    {callback in
-//                    async(.Main) {
-//                        UIView.animateWithDuration(duration, animations: { self?.label.center = self!.randomCenter() }, completion: callback)
-//                    }() {}
-//                }
+                let completed = await { UIView.animateWithDurationAsync(duration) { self?.label.center = self!.randomCenter() } }
 
                 print("animation completed: \(completed)")
             }
