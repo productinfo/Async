@@ -9,7 +9,7 @@
 import UIKit
 import SwiftAsync
 
-class DefaultDemoViewController: LogsDemoViewController {
+class DefaultDemoViewController: LogsTableViewController {
 
     let imageView = UIImageView()
 

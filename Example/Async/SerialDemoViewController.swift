@@ -10,7 +10,7 @@ import UIKit
 import ReactiveUI
 import SwiftAsync
 
-class SerialRequestDemoViewController: DelayedRequestDemoViewController {
+class SerialRequestDemoViewController: DelayedRequestTableViewController {
 
     override func reload() {
         requests.removeAll()

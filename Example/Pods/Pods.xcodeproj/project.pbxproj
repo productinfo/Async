@@ -55,7 +55,6 @@
 		84648E0CDB178859AA6C3DFBE36D3525 /* DSL.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC53380D4214B557AA4BFA81D19EEC0E /* DSL.swift */; };
 		853C2F302CEE2DB1BD258F039E2CBFF2 /* QuickSpec.h in Headers */ = {isa = PBXBuildFile; fileRef = BABCA828FE158437B981274C24FF9878 /* QuickSpec.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8D0BF52FF564A170A3D1DE28C27B233E /* Poll.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1329DFDF6911803FDFFAA60DEF84A6C3 /* Poll.swift */; };
-		8F0F48183A93576E907F49B0796563D7 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F248FC55F2A1012454C61FA5F1F3463C /* Extensions.swift */; };
 		90D0102A400F6B9DADC9FA5EDA657D18 /* Closures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FAC248501FDE830D9CD6B017263CDEE /* Closures.swift */; };
 		9187EEC2982DB82AD8D3A7001AA647D6 /* NMBExceptionCapture.m in Sources */ = {isa = PBXBuildFile; fileRef = B317AB5848D2025079E30CD91C1D7424 /* NMBExceptionCapture.m */; };
 		91FF3170A14CE60474B2FADF98D098FE /* QCKDSL.h in Headers */ = {isa = PBXBuildFile; fileRef = 82A1F1202EB88FE53236C05839DA0387 /* QCKDSL.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -276,7 +275,6 @@
 		F1B69D468F2C9ED110B499366E519CA8 /* Pods-Async_Example-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-Async_Example-acknowledgements.plist"; sourceTree = "<group>"; };
 		F1C28D1FA7C90172C02C1A69B7C8FF15 /* Nimble.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Nimble.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F2277E7497AEE323BB7CF9CDA6E5FECB /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		F248FC55F2A1012454C61FA5F1F3463C /* Extensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		FB27409BD45F60CB5AE7E77F2F4211DE /* SwiftAsync.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = SwiftAsync.xcconfig; sourceTree = "<group>"; };
 		FC53380D4214B557AA4BFA81D19EEC0E /* DSL.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DSL.swift; path = Quick/DSL/DSL.swift; sourceTree = "<group>"; };
 		FE558003F08024F8FBDDDDBBF3100079 /* Misc.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Misc.swift; sourceTree = "<group>"; };
@@ -461,7 +459,6 @@
 			children = (
 				5F2C4F1754A5B4E59FF5B8988591A8FD /* Async.swift */,
 				DD060F06D21415FD7191471EB4AB1430 /* DispatchQueue.swift */,
-				F248FC55F2A1012454C61FA5F1F3463C /* Extensions.swift */,
 				FE558003F08024F8FBDDDDBBF3100079 /* Misc.swift */,
 			);
 			path = Classes;
@@ -885,7 +882,6 @@
 			files = (
 				112B790761AC24CFE8F1DBC0E9AF1E49 /* Async.swift in Sources */,
 				CA6C889D2DA903A906592ACF5E963D69 /* DispatchQueue.swift in Sources */,
-				8F0F48183A93576E907F49B0796563D7 /* Extensions.swift in Sources */,
 				572DBB3562A176D328A4B5EBF46728B9 /* Misc.swift in Sources */,
 				2F5B5F62A170C553FDA387493D882378 /* SwiftAsync-dummy.m in Sources */,
 			);

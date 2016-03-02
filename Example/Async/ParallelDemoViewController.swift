@@ -9,7 +9,7 @@
 import UIKit
 import SwiftAsync
 
-class ParallelRequestDemoViewController: DelayedRequestDemoViewController {
+class ParallelRequestDemoViewController: DelayedRequestTableViewController {
 
     override func reload() {
         requests.removeAll()

@@ -9,7 +9,7 @@
 import UIKit
 import SwiftAsync
 
-class SleepDemoViewController: LogsDemoViewController {
+class SleepDemoViewController: LogsTableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()

@@ -25,11 +25,10 @@ struct DelayedRequest {
         }
     }
 
+    var state: State
     let delay: Int
     let URL: NSURL
 
-    var state: State
-//    var response: JSON
     init(delay: Int) {
         self.delay = delay
         URL = NSURL(string: "\(DelayedRequest.baseURL)\(delay)")!
@@ -52,6 +51,4 @@ public extension CGFloat {
         return (r * (upper - lower)) + lower
     }
 }
-
-
 

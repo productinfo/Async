@@ -9,7 +9,7 @@
 import UIKit
 import SwiftAsync
 
-class LogsDemoViewController: UITableViewController {
+class LogsTableViewController: UITableViewController {
 
     var logs = [String]()
 

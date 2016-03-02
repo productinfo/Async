@@ -10,7 +10,7 @@ import UIKit
 import ReactiveUI
 import SwiftAsync
 
-class DelayedRequestDemoViewController: UITableViewController {
+class DelayedRequestTableViewController: UITableViewController {
 
     var requests = [DelayedRequest]()
     let numberOfRequests = 10
