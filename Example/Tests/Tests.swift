@@ -2,7 +2,7 @@
 
 import Quick
 import Nimble
-import Async
+import SwiftAsync
 import Foundation
 
 class TableOfContentsSpec: QuickSpec {
@@ -187,11 +187,11 @@ class TableOfContentsSpec: QuickSpec {
 
                 createString {(s: String) in
                     expect(s) == ""
-                    (appendString(s, "https://")) {(s: String) in
+                    appendString(s, "https://")() {(s: String) in
                         expect(s) == "https://"
-                        (appendString(s, "swift")) {(s: String) in
+                        appendString(s, "swift")() {(s: String) in
                             expect(s) == "https://swift"
-                            (appendString(s, ".org")) {(s: String) in
+                            appendString(s, ".org")() {(s: String) in
                                 expect(s) == "https://swift.org"
                             }
                         }

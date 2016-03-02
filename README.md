@@ -26,40 +26,32 @@ Prerequisites:
 - [Capture List](https://developer.apple.com/library/ios/documentation/Swift/Conceptual/Swift_Programming_Language/AutomaticReferenceCounting.html#//apple_ref/doc/uid/TP40014097-CH20-ID48)
 
 ### async
-`async` takes a closure as parameter and acts as `dispatch_async`
-~~~swift
-// Take a nap
-async {
-    let seconds = UInt32(random() % 5)
-    sleep(seconds)
-    print("Slept for \(seconds) seconds")
-}
-~~~
-
-`async` can also take a closure that returns something, ie of type `() -> T` and returns a thunk that can be executed by supplying a callback or by `await`
-
+Here is how you create an async function
 ~~~swift
 let createImage = async {() -> UIImage in
     sleep(3)
     return UIImage()
 }
+~~~
 
-createImage {image in
+Here is how you execute the function
+~~~swift
+createImage() {image in
   // do something with the image
 }
 ~~~
 
-Here is how you pass parameters
+Here is how you create async functions with parameters
 ~~~swift
 let fetchImage = {(URL: NSURL) in
     async {() -> UIImage in
         // fetch the image synchronously
-        // let image = get(URL)
+        let image = get(URL)
         return image
     }
 }
 
-(fetchImage(NSURL(string: "...")!)) {image in
+fetchImage(URL)() {image in
     // do something with the image
 }
 ~~~
@@ -86,9 +78,9 @@ Let's chain them together
 print("creating image")
 createImage {image in
     print("processing image")
-    (processImage(image)) {image in
+    processImage(image)() {image in
         print("updating imageView")
-        (updateImageView(image)) { updated in
+        updateImageView(image)() { updated in
             print("updated imageView: \(updated)")
         }
     }
@@ -99,38 +91,35 @@ That was callback hell. `await` is here for the rescue.
 ~~~swift
 async {
     print("creating image")
-    var image = await(createImage)
+    var image = await { createImage }
     print("processing image")
-    image = await(processImage(image))
+    image = await { processImage(image) }
     print("updating imageView")
-    let updated = await(updateImageView(image))
+    let updated = await { updateImageView(image) }
     print("updated imageView: \(updated)")
-}
+}() {}
 ~~~
 
 ### await
-`await` is a blocking function. Because of this, it should never be called in main thread. It takes a closure of type `(T -> Void) -> Void`, AKA a thunk, executes it and returns the result synchronously.
+`await` is a blocking function. Because of this, it should never be called in main thread. It executes a closure of type `(T -> Void) -> Void`, AKA a thunk, and returns the result synchronously.
 
 ~~~swift
 async {
     // blocks the thread until callback is called
-    let message = await {
-        (callback: (String -> Void)) in
+    let message = await {(callback: (String -> Void)) in
         sleep(1)
         callback("Hello")
     }
     print(message) // "Hello"
-}
+}() {}
 
 // equivalent to
 async {
-    let message = await(
-      async {() -> String in
-        sleep(1)
-        return "Hello"
-      })
+    let message = await {
+        async {() -> String in sleep(1); return "Hello" }
+    }
     print(message) // "Hello"
-}
+}() {}
 
 // equivalent to
 async {
@@ -164,7 +153,7 @@ let get = {(URL: NSURL) in
 async {
   let data = await(get(URL))
   print(data)
-}
+}() {}
 ~~~
 
 ### serial vs parallel
@@ -181,7 +170,7 @@ async {
     }
 
     print("fetched \(results.count) items in series")
-}
+}() {}
 ~~~
 
 `await` can also take an array or a dictionary of tasks and perform them in parallel
@@ -191,8 +180,10 @@ async {
     let results = await(blocks: URLs.map(get))
 
     print("fetched \(results.count) items in parallel")
-}
+}() {}
 ~~~
+
+Test file and demo app for more examples.
 
 ### Strong reference cycle
 According to [Strong Reference Cycles for Closures](https://developer.apple.com/library/ios/documentation/Swift/Conceptual/Swift_Programming_Language/AutomaticReferenceCounting.html#//apple_ref/doc/uid/TP40014097-CH20-ID48)
