@@ -30,12 +30,12 @@ class ChainedAnimationDemoViewController: UIViewController {
                 let completed = await {callback in
                     async(.Main) {
                         UIView.animateWithDuration(duration, animations: { self?.label.center = self!.randomCenter() }, completion: callback)
-                    }($)
+                    }() {}
                 }
 
                 print("animation completed: \(completed)")
             }
-        }($)
+        }() {}
     }
 
     func randomCenter() -> CGPoint {

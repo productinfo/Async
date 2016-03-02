@@ -27,7 +27,7 @@ class LogsDemoViewController: UITableViewController {
         print(message)
         async(.Main) {
             self.tableView.reloadData()
-        }($)
+        }() {}
     }
 
     // MARK: - Table view data source

@@ -21,7 +21,7 @@ class SleepDemoViewController: LogsDemoViewController {
                 self?.log("sleeping for \(seconds) sec")
                 sleep(seconds)
             }
-        }($)
+        }() {}
     }
 
 }

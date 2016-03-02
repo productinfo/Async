@@ -36,7 +36,7 @@ class SerialRequestDemoViewController: DelayedRequestDemoViewController {
             }
 
             print("downloaded \(results.count) URLs in series")
-        }($)
+        }() {}
     }
 
 }

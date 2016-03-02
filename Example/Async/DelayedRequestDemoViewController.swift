@@ -35,7 +35,7 @@ class DelayedRequestDemoViewController: UITableViewController {
         async(.Main) {[unowned self] in
             self.requests[index].state = state
             self.tableView.reloadData()
-        }($)
+        }() {}
     }
 
     // MARK: - Table view data source

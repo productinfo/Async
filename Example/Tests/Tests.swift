@@ -49,7 +49,7 @@ class TableOfContentsSpec: QuickSpec {
                 async {
                     await(task: async { expect(1) == 1 })
                     await { async { expect(1) == 1 } }
-                }($)
+                }() {}
 
                 waitUntil { done in
                     NSThread.sleepForTimeInterval(0.5)
@@ -86,7 +86,7 @@ class TableOfContentsSpec: QuickSpec {
                     expect(response).to(beTruthy())
                     expect(response!.URL!.absoluteString) == "https://httpbin.org/delay/1"
                     expect(error).to(beNil())
-                }($)
+                }() {}
 
                 waitUntil(timeout: 3) { done in
                     NSThread.sleepForTimeInterval(1.5)
@@ -207,7 +207,7 @@ class TableOfContentsSpec: QuickSpec {
                     expect(s) == "https://swift"
                     s = await { appendString(s, ".org") }
                     expect(s) == "https://swift.org"
-                }($)
+                }() {}
 
                 waitUntil { done in
                     NSThread.sleepForTimeInterval(0.5)
@@ -246,7 +246,7 @@ class TableOfContentsSpec: QuickSpec {
                     let (data3, error3) = await { load("random.txt") }
                     expect(data3).to(beNil())
                     expect(error3) == .NotFoundError
-                }($)
+                }() {}
 
                 waitUntil { done in
                     NSThread.sleepForTimeInterval(0.5)
@@ -481,7 +481,7 @@ class TableOfContentsSpec: QuickSpec {
 
                 async {
                     expect{ try await${ willThrow } }.to(throwError())
-                }($)
+                }() {}
 
                 waitUntil { done in
                     NSThread.sleepForTimeInterval(0.5)
@@ -526,23 +526,23 @@ class TableOfContentsSpec: QuickSpec {
                     #else
                         expect(qos_class_self()) == qos_class_main()
                     #endif
-                }($)
+                }() {}
 
                 async(.UserInteractive) {
                     expect(qos_class_self()) == QOS_CLASS_USER_INTERACTIVE
-                }($)
+                }() {}
 
                 async(.UserInitiated) {
                     expect(qos_class_self()) == QOS_CLASS_USER_INITIATED
-                }($)
+                }() {}
 
                 async(.Utility) {
                     expect(qos_class_self()) == QOS_CLASS_UTILITY
-                }($)
+                }() {}
 
                 async(.Background) {
                     expect(qos_class_self()) == QOS_CLASS_BACKGROUND
-                }($)
+                }() {}
 
                 let customQueue = dispatch_queue_create("CustomQueueLabel", DISPATCH_QUEUE_CONCURRENT)
                 async(.Custom(customQueue)) {
@@ -550,7 +550,7 @@ class TableOfContentsSpec: QuickSpec {
                     let isValidClass = currentClass == qos_class_main() || currentClass == QOS_CLASS_USER_INITIATED
                     expect(isValidClass) == true
                     // TODO: Test for current queue label. dispatch_get_current_queue is unavailable in Swift, so we cant' use the return value from and pass it to dispatch_queue_get_label.
-                }($)
+                }() {}
 
                 waitUntil { done in
                     NSThread.sleepForTimeInterval(0.5)
@@ -568,35 +568,35 @@ class TableOfContentsSpec: QuickSpec {
                         #endif
                         callback()
                     }
-                }($)
+                }() {}
 
                 async {
                     await(.UserInteractive) {(callback: Void -> Void) in
                         expect(qos_class_self()) == QOS_CLASS_USER_INTERACTIVE
                         callback()
                     }
-                }($)
+                }() {}
 
                 async {
                     await(.UserInitiated) {(callback: Void -> Void) in
                         expect(qos_class_self()) == QOS_CLASS_USER_INITIATED
                         callback()
                     }
-                }($)
+                }() {}
 
                 async {
                     await(.Utility) {(callback: Void -> Void) in
                         expect(qos_class_self()) == QOS_CLASS_UTILITY
                         callback()
                     }
-                }($)
+                }() {}
 
                 async {
                     await(.Background) {(callback: Void -> Void) in
                         expect(qos_class_self()) == QOS_CLASS_BACKGROUND
                         callback()
                     }
-                }($)
+                }() {}
 
                 let customQueue = dispatch_queue_create("CustomQueueLabel", DISPATCH_QUEUE_CONCURRENT)
                 async {
@@ -607,7 +607,7 @@ class TableOfContentsSpec: QuickSpec {
                         // TODO: Test for current queue label. dispatch_get_current_queue is unavailable in Swift, so we cant' use the return value from and pass it to dispatch_queue_get_label.
                         callback()
                     }
-                }($)
+                }() {}
 
                 waitUntil { done in
                     NSThread.sleepForTimeInterval(0.5)

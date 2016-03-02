@@ -33,7 +33,7 @@ class ParallelRequestDemoViewController: DelayedRequestDemoViewController {
             let results = await(parallel: array)
 
             print("downloaded \(results.count) URLs in parallel")
-        }($)
+        }() {}
 
     }
 
