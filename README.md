@@ -7,6 +7,34 @@
 
 Async, await control flow for Swift.
 
+async/await turns this:
+~~~swift
+// example credit to: http://promisekit.org/chaining
+dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+    let md5 = md5ForData(data)
+    dispatch_async(dispatch_get_main_queue()) {
+        self.label.text = md5
+        UIView.animateWithDuration(0.3, animations: {
+            self.label.alpha = 1
+            }) {
+                // this is the end point
+                // add code to happen next here
+        }
+    }
+}
+~~~
+
+into:
+~~~swift
+async {
+    let md5 = md5ForData(data)
+    await { async(.Main) { self.label.text = md5 } }
+    await { UIView.animateWithDurationAsync(0.3) {self.label.alpha = 1} }
+    // this is the end point
+    // add code to happen next here
+}() {}
+~~~
+
 ## Installation
 
 Async is available through [CocoaPods](http://cocoapods.org). To install
@@ -17,6 +45,7 @@ pod "SwiftAsync"
 ```
 
 ## Usage
+The [test file](https://github.com/zhxnlai/Async/blob/master/Example/Tests/Tests.swift) and example project help you get started.
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
@@ -26,7 +55,7 @@ Prerequisites:
 - [Capture List](https://developer.apple.com/library/ios/documentation/Swift/Conceptual/Swift_Programming_Language/AutomaticReferenceCounting.html#//apple_ref/doc/uid/TP40014097-CH20-ID48)
 
 ### async
-Here is how you create an async function
+Here is how you create an async function:
 ~~~swift
 let createImage = async {() -> UIImage in
     sleep(3)
@@ -34,14 +63,14 @@ let createImage = async {() -> UIImage in
 }
 ~~~
 
-Here is how you execute the async function
+Here is how you call an async function, by supplying a callback:
 ~~~swift
 createImage() {image in
   // do something with the image
 }
 ~~~
 
-Here is how you create an async function with parameters
+Here is how you create an async function with parameters:
 ~~~swift
 let fetchImage = {(URL: NSURL) in
     async {() -> UIImage in
@@ -56,7 +85,7 @@ fetchImage(URL)() {image in
 }
 ~~~
 
-Let's define more functions like this
+Let's define more async functions:
 ~~~swift
 let processImage = {(image: UIImage) in
     async {() -> UIImage in
@@ -66,22 +95,21 @@ let processImage = {(image: UIImage) in
 }
 
 let updateImageView = {(image: UIImage) in
-    async(.Main) {() -> Bool in
+    async(.Main) {
         self.imageView.image = image
-        return true
     }
 }
 ~~~
 
-Chaining async functions is cumbersome. Use `await` to simplify it.
+Instead of chaining async functions with callbacks, use `await`:
 ~~~swift
 print("creating image")
 createImage {image in
     print("processing image")
     processImage(image)() {image in
         print("updating imageView")
-        updateImageView(image)() { updated in
-            print("updated imageView: \(updated)")
+        updateImageView(image)() {
+            print("updated imageView")
         }
     }
 }
@@ -92,13 +120,13 @@ async {
     print("processing image")
     image = await { processImage(image) }
     print("updating imageView")
-    let updated = await { updateImageView(image) }
-    print("updated imageView: \(updated)")
+    await { updateImageView(image) }
+    print("updated imageView")
 }() {}
 ~~~
 
 ### await
-`await` is a blocking function. Because of this, it should never be called in main thread. It executes a closure of type `(T -> Void) -> Void`, AKA a thunk, and returns the result synchronously.
+`await` is a blocking/synchronous function. Therefore, it should never be called in main thread. It executes an async functions, which is a closure of type `(T -> Void) -> Void`, and returns the result synchronously.
 
 ~~~swift
 async {
@@ -123,7 +151,7 @@ async {
     sleep(1)
     let message = "Hello"
     print(message) // "Hello"
-}
+} {}
 ~~~
 
 Here is how to use `await` to wrap asynchronous APIs (eg. network request, animation, ...) and make them synchronous.
@@ -136,51 +164,100 @@ let get = {(URL: NSURL) in
     }
 }
 
-// with error handling
-let get = {(URL: NSURL) in
-    async { () -> NSData? in
-        let (data, _, error) = await {callback in session.dataTaskWithURL(URL, completionHandler: callback).resume()}
-        guard let d = data where error != nil else { return nil }
-        return d
+// with unwrapping
+let get2 = {(URL: NSURL) in
+    async { () -> (NSData, NSURLResponse)? in
+        let (data, response, error) = await {callback in session.dataTaskWithURL(URL, completionHandler: callback).resume()}
+        guard let d = data, r = response where error != nil else { return nil }
+        return (d, r)
     }
 }
 
 async {
-  let data = await(get(URL))
-  print(data)
+  if let (data, response) = await {get2(NSURL())} {
+    // do something
+  }
 }() {}
 ~~~
 
-### serial vs parallel
+~~~swift
+public extension UIView {
+    class func animateWithDurationAsync(duration: NSTimeInterval, animations: () -> Void) -> (Bool -> Void) -> Void {
+        return async {
+            await(.Main) {callback in
+                UIView.animateWithDuration(duration, animations: animations, completion: callback)
+            }
+        }
+    }
+}
 
-Since `await` is blocking, for loop is a natural way to run tasks in series.
+async {
+  await { UIView.animateWithDurationAsync(0.3) {self.label.alpha = 1} }
+}() {}
+~~~
+
+### Serial vs Parallel
+
+To run async functions in series, we can use for/while loops since `await` is blocking/synchronous.
 ~~~swift
 let URLs = [NSURL]()
 async {
     var results = [NSData]()
-
     for URL in URLs {
-        let data = await(block: get(URL))
-        results.append(data)
+        results.append(await { get(URL) })
     }
-
     print("fetched \(results.count) items in series")
 }() {}
 ~~~
 
-`await` can also take an array or a dictionary of tasks and perform them in parallel.
+To run async functions in parallel, call `await` with an array or a dictionary of async functions.
 ~~~swift
 let URLs = [NSURL]()
 async {
-    let results = await(blocks: URLs.map(get))
-
+    let results = await(parallel: URLs.map(get))
     print("fetched \(results.count) items in parallel")
 }() {}
 ~~~
 
-Error handling.
+### Additional APIs
+By default, async functions are scheduled in the [global concurrent queue](https://developer.apple.com/library/ios/documentation/General/Conceptual/ConcurrencyProgrammingGuide/OperationQueues/OperationQueues.html#//apple_ref/doc/uid/TP40008091-CH102-SW5) that has [quality of service](https://developer.apple.com/library/ios/documentation/Performance/Conceptual/EnergyGuide-iOS/PrioritizeWorkWithQoS.html) `QOS_CLASS_USER_INITIATED`. To schedule on a different queue:
+~~~swift
+let taskOnMainThread = async(.Main) {
 
-Test file and demo app for more examples.
+}
+
+let customQueue = dispatch_queue_create("CustomQueueLabel", DISPATCH_QUEUE_CONCURRENT)
+let taskOnCustomQueue = async(.Custom(customQueue)) {
+
+}
+~~~
+
+By default, `await` waits forever for the async function to finish. To add a timeout:
+~~~swift
+async {
+    await(timeout: 0.4) { async { () -> Bool in NSThread.sleepForTimeInterval(0.3); return true } }
+}() {value in}
+~~~
+
+### Error handling
+`async$` and `await$` share the same API with `async` and `await`. In addition, they handle thrown errors:
+
+~~~swift
+enum Error: ErrorType {
+    case TestError
+}
+
+let willThrow = async$ {() throws in
+    NSThread.sleepForTimeInterval(0.05)
+    throw Error.TestError
+}
+
+async$ {
+    try await${ willThrow }
+}({(_, error) in
+    expect(error).to(beTruthy())
+})
+~~~
 
 ### Strong reference cycle
 According to [Strong Reference Cycles for Closures](https://developer.apple.com/library/ios/documentation/Swift/Conceptual/Swift_Programming_Language/AutomaticReferenceCounting.html#//apple_ref/doc/uid/TP40014097-CH20-ID48)
