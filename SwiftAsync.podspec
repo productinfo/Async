@@ -7,9 +7,9 @@
 #
 
 Pod::Spec.new do |s|
-  s.name             = "Async"
+  s.name             = "SwiftAsync"
   s.version          = "0.1.0"
-  s.summary          = "A short description of Async."
+  s.summary          = "Async, await control flow for Swift."
 
 # This description is used to generate tags and improve search results.
 #   * Think: What does it do? Why did you write it? What is the focus?
@@ -17,14 +17,15 @@ Pod::Spec.new do |s|
 #   * Write the description between the DESC delimiters below.
 #   * Finally, don't worry about the indent, CocoaPods strips it!  
   s.description      = <<-DESC
+                       Async, await control flow for Swift.
                        DESC
 
-  s.homepage         = "https://github.com/<GITHUB_USERNAME>/Async"
+  s.homepage         = "https://github.com/zhxnlai/Async"
   # s.screenshots     = "www.example.com/screenshots_1", "www.example.com/screenshots_2"
   s.license          = 'MIT'
   s.author           = { "Zhixuan Lai" => "zhxnlai@gmail.com" }
-  s.source           = { :git => "https://github.com/<GITHUB_USERNAME>/Async.git", :tag => s.version.to_s }
-  # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
+  s.source           = { :git => "https://github.com/zhxnlai/Async.git", :tag => s.version.to_s }
+  s.social_media_url   = "http://twitter.com/ZhixuanLai"
 
   s.platform     = :ios, '8.0'
   s.requires_arc = true
