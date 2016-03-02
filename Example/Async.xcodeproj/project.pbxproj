@@ -95,11 +95,11 @@
 		092B23B81C8668280003B6F9 /* Demos */ = {
 			isa = PBXGroup;
 			children = (
-				092B23A51C8667AE0003B6F9 /* ChainedAnimationDemoViewController.swift */,
 				092B23A61C8667AE0003B6F9 /* DefaultDemoViewController.swift */,
+				092B23AD1C8667AE0003B6F9 /* SleepDemoViewController.swift */,
+				092B23A51C8667AE0003B6F9 /* ChainedAnimationDemoViewController.swift */,
 				092B23AB1C8667AE0003B6F9 /* ParallelDemoViewController.swift */,
 				092B23AC1C8667AE0003B6F9 /* SerialDemoViewController.swift */,
-				092B23AD1C8667AE0003B6F9 /* SleepDemoViewController.swift */,
 			);
 			name = Demos;
 			sourceTree = "<group>";

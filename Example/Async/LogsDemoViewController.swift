@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SwiftAsync
 
 class LogsDemoViewController: UITableViewController {
 
@@ -24,9 +25,9 @@ class LogsDemoViewController: UITableViewController {
 
         logs.append(message)
         print(message)
-        async(dispatch_get_main_queue()) {
+        async(.Main) {
             self.tableView.reloadData()
-        }()
+        }($)
     }
 
     // MARK: - Table view data source

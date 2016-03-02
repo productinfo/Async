@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SwiftAsync
 
 class ParallelRequestDemoViewController: DelayedRequestDemoViewController {
 
@@ -18,20 +19,21 @@ class ParallelRequestDemoViewController: DelayedRequestDemoViewController {
         }
 
         async {[weak self] in
-            let results = await(blocks: self!.requests.enumerate().map {(index: Int, request: DelayedRequest) in
-                 async { () -> NSData in
+            let array = self!.requests.enumerate().map {(index: Int, request: DelayedRequest) in
+                async { () -> NSData in
                     self?.updateRequest(index, state: .Running)
 
-                    let data = await(get(request.URL))
+                    let data = await { get(request.URL) }
 
                     self?.updateRequest(index, state: .Finished)
                     print("downloaded URL: \(request.URL)")
                     return data
                 }
-            })
+            }
+            let results = await(parallel: array)
 
             print("downloaded \(results.count) URLs in parallel")
-        }()
+        }($)
 
     }
 

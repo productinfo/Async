@@ -8,6 +8,7 @@
 
 import UIKit
 import ReactiveUI
+import SwiftAsync
 
 class SerialRequestDemoViewController: DelayedRequestDemoViewController {
 
@@ -26,7 +27,7 @@ class SerialRequestDemoViewController: DelayedRequestDemoViewController {
 
                 self?.updateRequest(index, state: .Running)
 
-                let data = await(get(request.URL))
+                let data = await { get(request.URL) }
 
                 self?.updateRequest(index, state: .Finished)
                 results.append(data)
@@ -35,7 +36,7 @@ class SerialRequestDemoViewController: DelayedRequestDemoViewController {
             }
 
             print("downloaded \(results.count) URLs in series")
-        }()
+        }($)
     }
 
 }

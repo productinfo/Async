@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SwiftAsync
 
 class ChainedAnimationDemoViewController: UIViewController {
 
@@ -27,14 +28,14 @@ class ChainedAnimationDemoViewController: UIViewController {
         async {[weak self] in
             while self != nil {
                 let completed = await {callback in
-                    async(dispatch_get_main_queue()) {
+                    async(.Main) {
                         UIView.animateWithDuration(duration, animations: { self?.label.center = self!.randomCenter() }, completion: callback)
-                    }()
+                    }($)
                 }
 
                 print("animation completed: \(completed)")
             }
-        }()
+        }($)
     }
 
     func randomCenter() -> CGPoint {

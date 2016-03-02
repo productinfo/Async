@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import SwiftAsync
 
 struct DelayedRequest {
     static let baseURL = "https://httpbin.org/delay/"

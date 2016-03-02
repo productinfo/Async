@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SwiftAsync
 
 class DefaultDemoViewController: LogsDemoViewController {
 
@@ -28,7 +29,7 @@ class DefaultDemoViewController: LogsDemoViewController {
         }
 
         let updateImageView = {(image: UIImage) in
-            async(dispatch_get_main_queue()) {() -> Bool in
+            async(.Main) {() -> Bool in
                 self.imageView.image = image
                 return true
             }
@@ -38,13 +39,12 @@ class DefaultDemoViewController: LogsDemoViewController {
             self?.log("creating image")
             var image = await { createImage }
             self?.log("processing image")
-            image = await(processImage(image))
             image = await { processImage(image) }
-            await { async(dispatch_get_main_queue()) { self?.imageView.image = UIImage() } }
+            await { async(.Main) { self?.imageView.image = UIImage() } }
             self?.log("updating imageView")
-            let updated = await(updateImageView(image))
+            let updated = await { updateImageView(image) }
             self?.log("updated imageView: \(updated)")
-        }()
+        }($)
 
 
         /*

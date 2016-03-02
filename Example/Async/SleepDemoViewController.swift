@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SwiftAsync
 
 class SleepDemoViewController: LogsDemoViewController {
 
@@ -20,7 +21,7 @@ class SleepDemoViewController: LogsDemoViewController {
                 self?.log("sleeping for \(seconds) sec")
                 sleep(seconds)
             }
-        }()
+        }($)
     }
 
 }

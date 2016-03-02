@@ -79,12 +79,8 @@ class TableOfContentsSpec: QuickSpec {
                     async { await {callback in session.dataTaskWithURL(URL, completionHandler: callback).resume()} }
                 }
 
-                let URLWithDelay = {(delay: Int) in
-                    NSURL(string: "https://httpbin.org/delay/\(delay)")!
-                }
-
                 async {
-                    let URL = URLWithDelay(1)
+                    let URL = NSURL(string: "https://httpbin.org/delay/1")!
                     let (data, response, error) = await { get(URL) }
                     expect(data).to(beTruthy())
                     expect(response).to(beTruthy())

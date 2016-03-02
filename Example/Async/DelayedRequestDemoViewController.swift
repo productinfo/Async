@@ -8,6 +8,7 @@
 
 import UIKit
 import ReactiveUI
+import SwiftAsync
 
 class DelayedRequestDemoViewController: UITableViewController {
 
@@ -31,10 +32,10 @@ class DelayedRequestDemoViewController: UITableViewController {
     }
 
     func updateRequest(index: Int, state: DelayedRequest.State) {
-        async(dispatch_get_main_queue()) {[unowned self] in
+        async(.Main) {[unowned self] in
             self.requests[index].state = state
             self.tableView.reloadData()
-        }()
+        }($)
     }
 
     // MARK: - Table view data source
