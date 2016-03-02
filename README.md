@@ -34,14 +34,14 @@ let createImage = async {() -> UIImage in
 }
 ~~~
 
-Here is how you execute the function
+Here is how you execute the async function
 ~~~swift
 createImage() {image in
   // do something with the image
 }
 ~~~
 
-Here is how you create async functions with parameters
+Here is how you create an async function with parameters
 ~~~swift
 let fetchImage = {(URL: NSURL) in
     async {() -> UIImage in
@@ -66,14 +66,14 @@ let processImage = {(image: UIImage) in
 }
 
 let updateImageView = {(image: UIImage) in
-    async(dispatch_get_main_queue()) {() -> Bool in
+    async(.Main) {() -> Bool in
         self.imageView.image = image
         return true
     }
 }
 ~~~
 
-Let's chain them together
+Chaining async functions is cumbersome. Use `await` to simplify it.
 ~~~swift
 print("creating image")
 createImage {image in
@@ -85,10 +85,7 @@ createImage {image in
         }
     }
 }
-~~~
 
-That was callback hell. `await` is here for the rescue.
-~~~swift
 async {
     print("creating image")
     var image = await { createImage }
@@ -129,9 +126,7 @@ async {
 }
 ~~~
 
-Most existing asynchronous APIs take completion handlers. eg. network request, animation, ...
-
-Here is how to use `await` to wrap them and make them synchronous. For more examples, please take a look at the demo project.
+Here is how to use `await` to wrap asynchronous APIs (eg. network request, animation, ...) and make them synchronous.
 ~~~swift
 let session = NSURLSession(configuration: .ephemeralSessionConfiguration())
 
@@ -158,7 +153,7 @@ async {
 
 ### serial vs parallel
 
-Since `await` is blocking, here is the intuitive way to queue tasks in series
+Since `await` is blocking, for loop is a natural way to run tasks in series.
 ~~~swift
 let URLs = [NSURL]()
 async {
@@ -173,7 +168,7 @@ async {
 }() {}
 ~~~
 
-`await` can also take an array or a dictionary of tasks and perform them in parallel
+`await` can also take an array or a dictionary of tasks and perform them in parallel.
 ~~~swift
 let URLs = [NSURL]()
 async {
@@ -182,6 +177,8 @@ async {
     print("fetched \(results.count) items in parallel")
 }() {}
 ~~~
+
+Error handling.
 
 Test file and demo app for more examples.
 
