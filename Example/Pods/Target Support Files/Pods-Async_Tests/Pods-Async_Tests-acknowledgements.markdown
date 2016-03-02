@@ -1,7 +1,7 @@
 # Acknowledgements
 This application makes use of the following third party libraries:
 
-## Async
+## SwiftAsync
 
 Copyright (c) 2016 Zhixuan Lai <zhxnlai@gmail.com>
 

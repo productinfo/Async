@@ -1,20 +1,23 @@
 PODS:
-  - Async (0.1.0)
   - Nimble (3.0.0)
   - Quick (0.8.0)
+  - ReactiveUI (0.0.3)
+  - SwiftAsync (0.1.0)
 
 DEPENDENCIES:
-  - Async (from `../`)
   - Nimble (= 3.0.0)
   - Quick (~> 0.8.0)
+  - ReactiveUI
+  - SwiftAsync (from `../`)
 
 EXTERNAL SOURCES:
-  Async:
+  SwiftAsync:
     :path: "../"
 
 SPEC CHECKSUMS:
-  Async: da5249f707a060918b6e54d8b4ce578928c16b62
   Nimble: 4c353d43735b38b545cbb4cb91504588eb5de926
   Quick: 563d0f6ec5f72e394645adb377708639b7dd38ab
+  ReactiveUI: 05d1f5d884e5a2496a2cd2ac6c0ed35ab0218c02
+  SwiftAsync: 70cc7924335345852a09e4eb88b541e5492ee28f
 
 COCOAPODS: 0.39.0

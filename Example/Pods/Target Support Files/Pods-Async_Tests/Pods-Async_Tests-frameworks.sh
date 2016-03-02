@@ -84,12 +84,12 @@ strip_invalid_archs() {
 
 
 if [[ "$CONFIGURATION" == "Debug" ]]; then
-  install_framework "Pods-Async_Tests/Async.framework"
+  install_framework "Pods-Async_Tests/SwiftAsync.framework"
   install_framework "Pods-Async_Tests/Nimble.framework"
   install_framework "Pods-Async_Tests/Quick.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
-  install_framework "Pods-Async_Tests/Async.framework"
+  install_framework "Pods-Async_Tests/SwiftAsync.framework"
   install_framework "Pods-Async_Tests/Nimble.framework"
   install_framework "Pods-Async_Tests/Quick.framework"
 fi
