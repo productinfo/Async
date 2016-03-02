@@ -29,9 +29,8 @@ class DefaultDemoViewController: LogsDemoViewController {
         }
 
         let updateImageView = {(image: UIImage) in
-            async(.Main) {() -> Bool in
+            async(.Main) {
                 self.imageView.image = image
-                return true
             }
         }
 
@@ -42,23 +41,9 @@ class DefaultDemoViewController: LogsDemoViewController {
             image = await { processImage(image) }
             await { async(.Main) { self?.imageView.image = UIImage() } }
             self?.log("updating imageView")
-            let updated = await { updateImageView(image) }
-            self?.log("updated imageView: \(updated)")
-        }($)
-
-
-        /*
-        print("creating image")
-        createImage {image in
-            print("processing image")
-            (processImage(image)) {image in
-                print("updating imageView")
-                (updateImageView(image)) { updated in
-                    print("updated imageView: \(updated)")
-                }
-            }
-        }
-        */
+            await { updateImageView(image) }
+            self?.log("updated imageView")
+        }() {}
     }
 
 }
