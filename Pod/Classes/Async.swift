@@ -166,6 +166,47 @@ public func await$<T>(queue: DispatchQueue = getDefaultQueue(), task: (Void -> (
     return try await$(parallel: [task()])[0]
 }
 
+// MARK: - thunkify
+public func thunkify<T>(function: (T -> Void) -> Void) -> (T -> Void) -> Void {
+    return async { await { function($0) } }
+}
+
+public func thunkify<T, A>(function: (A, T -> Void) -> Void) -> (A) -> (T -> Void) -> Void {
+    return {(a: A) in async { await { function(a, $0) } } }
+}
+
+public func thunkify<T, A, B>(function: (A, B, T -> Void) -> Void) -> (A, B) -> (T -> Void) -> Void {
+    return {(a: A, b: B) in async { await { function(a, b, $0) } } }
+}
+
+public func thunkify<T, A, B, C>(function: (A, B, C, T -> Void) -> Void) -> (A, B, C) -> (T -> Void) -> Void {
+    return {(a: A, b: B, c: C) in async { await { function(a, b, c, $0) } } }
+}
+
+public func thunkify<T, A, B, C, D>(function: (A, B, C, D, T -> Void) -> Void) -> (A, B, C, D) -> (T -> Void) -> Void {
+    return {(a: A, b: B, c: C, d:D) in async { await { function(a, b, c, d, $0) } } }
+}
+
+public func thunkify<T>(queue: DispatchQueue, function: (T -> Void) -> Void) -> (T -> Void) -> Void {
+    return async { await {callback in async(queue) {function(callback)}(){} } }
+}
+
+public func thunkify<T, A>(queue: DispatchQueue, function: (A, T -> Void) -> Void) -> (A) -> (T -> Void) -> Void {
+    return {(a: A) in async { await {callback in async(queue) {function(a, callback)}(){} } } }
+}
+
+public func thunkify<T, A, B>(queue: DispatchQueue, function: (A, B, T -> Void) -> Void) -> (A, B) -> (T -> Void) -> Void {
+    return {(a: A, b: B) in async { await {callback in async(queue) {function(a, b, callback)}(){} } } }
+}
+
+public func thunkify<T, A, B, C>(queue: DispatchQueue, function: (A, B, C, T -> Void) -> Void) -> (A, B, C) -> (T -> Void) -> Void {
+    return {(a: A, b: B, c: C) in async { await {callback in async(queue) {function(a, b, c, callback)}(){} } } }
+}
+
+public func thunkify<T, A, B, C, D>(queue: DispatchQueue, function: (A, B, C, D, T -> Void) -> Void) -> (A, B, C, D) -> (T -> Void) -> Void {
+    return {(a: A, b: B, c: C, d: D) in async { await {callback in async(queue) {function(a, b, c, d,callback)}(){} } } }
+}
+
 // MARK: - Helpers
 private func getDefaultQueue() -> DispatchQueue {
     return .UserInitiated
