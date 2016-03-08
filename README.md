@@ -180,16 +180,12 @@ async {
 }() {}
 ~~~
 
+### thunkify
+Alternatively, you can use `thunkify`, which turns functions with trailing closure into an async functions
 ~~~swift
 extension UIView {
     class func animateWithDurationAsync(duration: NSTimeInterval, animations: () -> Void) -> (Bool -> Void) -> Void {
-        return async {
-            await {callback in
-                async(.Main) {
-                    UIView.animateWithDuration(duration, animations: animations, completion: callback)
-                }() {}
-            }
-        }
+        return thunkify(.Main, function: UIView.animateWithDuration)(duration, animations)
     }
 }
 
